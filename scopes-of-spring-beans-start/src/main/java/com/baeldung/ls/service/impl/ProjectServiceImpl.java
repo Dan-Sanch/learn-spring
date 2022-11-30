@@ -6,6 +6,7 @@ import com.baeldung.ls.service.IProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Optional;
 
 @Service
@@ -13,7 +14,13 @@ public class ProjectServiceImpl implements IProjectService {
 
     @Autowired
     private IProjectRepository projectRepository;
+    @Autowired
+    private IProjectRepository projectRepository2;
 
+    @PostConstruct
+    public void after() {
+        boolean stopHere = true;
+    }
     @Override
     public Optional<Project> findById(Long id) {
         return projectRepository.findById(id);
