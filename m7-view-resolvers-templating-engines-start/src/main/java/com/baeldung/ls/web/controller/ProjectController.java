@@ -1,8 +1,12 @@
 package com.baeldung.ls.web.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +22,8 @@ import com.baeldung.ls.service.IProjectService;
 import com.baeldung.ls.web.dto.ProjectDto;
 import com.baeldung.ls.web.dto.TaskDto;
 
-@RestController
+//@RestController // RESTful controller
+@Controller // MVC-style controller
 @RequestMapping(value = "/projects")
 public class ProjectController {
 
@@ -30,17 +35,15 @@ public class ProjectController {
 
     //
 
-    @GetMapping(value = "/{id}")
-    public ProjectDto findOne(@PathVariable Long id) {
-        Project entity = projectService.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        return convertToDto(entity);
-    }
+    @GetMapping
+    public String getProjects(Model model) {
+        Iterable<Project> projects = projectService.findAll();
+        List<ProjectDto> projectDtos = new ArrayList<>();
+        projects.forEach(p -> projectDtos.add(convertToDto(p)));
 
-    @PostMapping
-    public void create(@RequestBody ProjectDto newProject) {
-        Project entity = convertToEntity(newProject);
-        this.projectService.save(entity);
+        model.addAttribute("projects", projectDtos);
+
+        return "projects";
     }
 
     protected ProjectDto convertToDto(Project entity) {
